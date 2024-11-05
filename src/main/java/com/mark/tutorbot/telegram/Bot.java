@@ -2,6 +2,7 @@ package com.mark.tutorbot.telegram;
 
 import com.mark.tutorbot.service.UpdateDispatcher;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -10,8 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 @Component
 @RequiredArgsConstructor
 public class Bot extends TelegramWebhookBot {
-
+    @Autowired
     private UpdateDispatcher dispatcher;
+
     private TelegramProps props;
 
     public Bot(TelegramProps props, UpdateDispatcher dispatcher) {
