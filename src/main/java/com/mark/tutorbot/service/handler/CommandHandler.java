@@ -1,17 +1,26 @@
 package com.mark.tutorbot.service.handler;
 
 import com.mark.tutorbot.service.data.Command;
+import com.mark.tutorbot.service.factory.KeyboardFactory;
 import com.mark.tutorbot.telegram.Bot;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
+import java.util.List;
+
 import static com.mark.tutorbot.service.data.Command.*;
 
 
 @Service
+@RequiredArgsConstructor
 public class CommandHandler {
+
+    @Autowired
+    private final KeyboardFactory keyboardFactory;
 
     public BotApiMethod<?> answer(Message message, Bot bot) {
         switch (message.getText()) {
@@ -79,6 +88,11 @@ public class CommandHandler {
                         📌 Прикреплять домашние задания
                         📌 Ввести контроль успеваемости
                         """)
+                .replyMarkup(keyboardFactory.getInlineKeyboardMarkup(
+                        List.of("Помощь", "Обратная связь"),
+                        List.of(1,1),
+                        List.of("help", "feedback")
+                ))
                 .build();
     }
 
