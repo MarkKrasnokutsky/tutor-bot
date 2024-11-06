@@ -1,7 +1,10 @@
 package com.mark.tutorbot.service.handler;
 
+import com.mark.tutorbot.service.data.CallbackData;
 import com.mark.tutorbot.service.data.Command;
 import com.mark.tutorbot.service.factory.KeyboardFactory;
+import com.mark.tutorbot.service.manager.FeedbackManager;
+import com.mark.tutorbot.service.manager.HelpManager;
 import com.mark.tutorbot.telegram.Bot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,25 +16,31 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import java.util.List;
 
 import static com.mark.tutorbot.service.data.Command.*;
-
+import static com.mark.tutorbot.service.data.CallbackData.*;
 
 @Service
 @RequiredArgsConstructor
 public class CommandHandler {
 
     @Autowired
+    private final FeedbackManager feedbackManager;
+
+    @Autowired
+    private final HelpManager helpManager;
+
+    @Autowired
     private final KeyboardFactory keyboardFactory;
 
     public BotApiMethod<?> answer(Message message, Bot bot) {
         switch (message.getText()) {
-            case START -> {
+            case Command.START -> {
                 return start(message);
             }
-            case FEEDBACK -> {
-                return feedback(message);
+            case Command.FEEDBACK -> {
+                return feedbackManager.answerCommand(message);
             }
-            case HELP -> {
-                return help(message);
+            case Command.HELP -> {
+                return helpManager.answerCommand(message);
             }
             default -> {
                 return defaultAnswer(message);
@@ -45,35 +54,6 @@ public class CommandHandler {
                 .text("""
                         Упс. Неизвестная команда :(
                         """)
-                .build();
-    }
-
-    private BotApiMethod<?> help(Message message) {
-        return SendMessage.builder()
-                .chatId(message.getChatId())
-                .text("""
-                        📍 Доступные команды:
-                        - start
-                        - help
-                        - feedback
-                        
-                        📍 Доступные функции:
-                        - Расписание
-                        - Домашнее задание
-                        - Контроль успеваемости
-                        """)
-                .build();
-    }
-
-    private BotApiMethod<?> feedback(Message message) {
-        return SendMessage.builder()
-                .chatId(message.getChatId())
-                .text("""
-                        📍 Ссылки для обратной связи
-                        GitHub - https://github.com/markkrasnokutsky
-                        Telegram - https://t.me/emberquency
-                        """)
-                .disableWebPagePreview(true)
                 .build();
     }
 
@@ -91,7 +71,7 @@ public class CommandHandler {
                 .replyMarkup(keyboardFactory.getInlineKeyboardMarkup(
                         List.of("Помощь", "Обратная связь"),
                         List.of(1,1),
-                        List.of("help", "feedback")
+                        List.of(CallbackData.HELP, CallbackData.FEEDBACK)
                 ))
                 .build();
     }
