@@ -1,7 +1,9 @@
-package com.mark.tutorbot.service.manager;
+package com.mark.tutorbot.service.manager.help;
 
 import com.mark.tutorbot.service.factory.AnswerMethodFactory;
 import com.mark.tutorbot.service.factory.KeyboardFactory;
+import com.mark.tutorbot.service.manager.AbstractManager;
+import com.mark.tutorbot.telegram.Bot;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -11,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Component
 @RequiredArgsConstructor
-public class HelpManager {
+public class HelpManager extends AbstractManager {
 
     @Autowired
     private final AnswerMethodFactory answerMethodFactory;
@@ -19,7 +21,8 @@ public class HelpManager {
     @Autowired
     private final KeyboardFactory keyboardFactory;
 
-    public BotApiMethod<?> answerCommand(Message message) {
+    @Override
+    public BotApiMethod<?> answerCommand(Message message, Bot bot) {
         return answerMethodFactory.getSendMessage(
                 message.getChatId(),
                 """
@@ -36,7 +39,8 @@ public class HelpManager {
                 null);
     }
 
-    public BotApiMethod<?> answerCallbackQuery(CallbackQuery callbackQuery) {
+    @Override
+    public BotApiMethod<?> answerCallbackQuery(CallbackQuery callbackQuery, Bot bot) {
         return answerMethodFactory.getEditMessageText(
                 callbackQuery,
                 """
@@ -51,6 +55,11 @@ public class HelpManager {
                         - Контроль успеваемости
                         """,
                 null);
+    }
+
+    @Override
+    public BotApiMethod<?> answerMessage(Message message, Bot bot) {
+        return null;
     }
 
 }
