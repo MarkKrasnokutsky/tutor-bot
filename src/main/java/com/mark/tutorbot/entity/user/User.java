@@ -1,9 +1,6 @@
-package com.mark.tutorbot.entity;
+package com.mark.tutorbot.entity.user;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,4 +17,13 @@ public class User {
     @Column(name = "id")
     private Long chatId;
 
+    @Enumerated(EnumType.STRING)
+    Role role;
+
+    @Enumerated(EnumType.STRING)
+    Action action;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_details_id")
+    UserDetails details;
 }

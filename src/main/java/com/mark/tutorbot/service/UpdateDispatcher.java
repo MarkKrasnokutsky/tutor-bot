@@ -1,7 +1,5 @@
 package com.mark.tutorbot.service;
 
-import com.mark.tutorbot.entity.User;
-import com.mark.tutorbot.repository.UserRepository;
 import com.mark.tutorbot.service.handler.CallbackQueryHandler;
 import com.mark.tutorbot.service.handler.CommandHandler;
 import com.mark.tutorbot.service.handler.MessageHandler;
@@ -21,7 +19,6 @@ public class UpdateDispatcher {
     private final MessageHandler messageHandler;
     private final CommandHandler commandHandler;
     private final CallbackQueryHandler callbackQueryHandler;
-    private final UserRepository userRepository;
 
     public BotApiMethod<?> distribute(Update update, Bot bot) {
         if (update.hasCallbackQuery()) {
@@ -30,9 +27,6 @@ public class UpdateDispatcher {
         if (update.hasMessage()) {
             Message message = update.getMessage();
             if (message.hasText() && message.getText().startsWith("/")) {
-                userRepository.save(User.builder()
-                                .chatId(message.getChatId())
-                        .build());
                 return commandHandler.answer(message, bot);
             }
             return messageHandler.answer(message, bot);
