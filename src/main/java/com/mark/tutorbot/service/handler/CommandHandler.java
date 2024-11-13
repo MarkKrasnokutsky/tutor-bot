@@ -3,6 +3,7 @@ package com.mark.tutorbot.service.handler;
 import com.mark.tutorbot.service.data.Command;
 import com.mark.tutorbot.service.manager.feedback.FeedbackManager;
 import com.mark.tutorbot.service.manager.help.HelpManager;
+import com.mark.tutorbot.service.manager.profile.ProfileManager;
 import com.mark.tutorbot.service.manager.progress_control.ProgressControlManager;
 import com.mark.tutorbot.service.manager.start.StartManager;
 import com.mark.tutorbot.service.manager.task.TaskManager;
@@ -38,6 +39,9 @@ public class CommandHandler {
     @Autowired
     private final ProgressControlManager progressControlManager;
 
+    @Autowired
+    private final ProfileManager profileManager;
+
     public BotApiMethod<?> answer(Message message, Bot bot) {
         switch (message.getText()) {
             case Command.START -> {
@@ -57,6 +61,9 @@ public class CommandHandler {
             }
             case Command.PROGRESS -> {
                 return progressControlManager.answerCommand(message, bot);
+            }
+            case Command.PROFILE -> {
+                return profileManager.answerCommand(message, bot);
             }
             default -> {
                 return defaultAnswer(message);
