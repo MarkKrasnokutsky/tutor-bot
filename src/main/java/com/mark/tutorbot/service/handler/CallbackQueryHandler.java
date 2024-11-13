@@ -1,5 +1,6 @@
 package com.mark.tutorbot.service.handler;
 
+import com.mark.tutorbot.service.manager.auth.AuthManager;
 import com.mark.tutorbot.service.manager.feedback.FeedbackManager;
 import com.mark.tutorbot.service.manager.help.HelpManager;
 import com.mark.tutorbot.service.manager.progress_control.ProgressControlManager;
@@ -25,6 +26,9 @@ public class CallbackQueryHandler {
     private final HelpManager helpManager;
 
     @Autowired
+    private final AuthManager authManager;
+
+    @Autowired
     private final TimetableManager timetableManager;
 
     @Autowired
@@ -44,6 +48,9 @@ public class CallbackQueryHandler {
         }
         if (callbackData.split("_")[0].equals(PROGRESS)) {
             return progressControlManager.answerCallbackQuery(callbackQuery, bot);
+        }
+        if (AUTH.equals(callbackData.split("_")[0])) {
+            return authManager.answerCallbackQuery(callbackQuery, bot);
         }
         switch (callbackData) {
             case FEEDBACK -> {
