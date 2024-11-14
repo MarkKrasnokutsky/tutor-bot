@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+import java.util.UUID;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -17,6 +20,9 @@ public class User {
     @Column(name = "id")
     private Long chatId;
 
+    @Column(name = "token", unique = true)
+    UUID token;
+
     @Enumerated(EnumType.STRING)
     Role role;
 
@@ -26,4 +32,18 @@ public class User {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_details_id")
     UserDetails details;
+
+    @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id"),
+            name = "rel")
+    List<User> users;
+
+    @PrePersist
+    private void generateToken() {
+        if (this.getToken() == null) {
+            token = UUID.randomUUID();
+        }
+    }
 }

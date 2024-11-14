@@ -9,16 +9,15 @@ import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 @Component
-@RequiredArgsConstructor
 public class Bot extends TelegramWebhookBot {
-    @Autowired
-    private UpdateDispatcher dispatcher;
 
-    private TelegramProps props;
+    private final UpdateDispatcher dispatcher;
 
-    public Bot(TelegramProps props, UpdateDispatcher dispatcher) {
-        super(props.getToken());
-        this.props = props;
+    private final TelegramProps telegramProps;
+
+    public Bot(TelegramProps telegramProps, UpdateDispatcher dispatcher) {
+        super(telegramProps.getToken());
+        this.telegramProps = telegramProps;
         this.dispatcher = dispatcher;
     }
 
@@ -29,11 +28,11 @@ public class Bot extends TelegramWebhookBot {
 
     @Override
     public String getBotPath() {
-        return props.getPath();
+        return telegramProps.getPath();
     }
 
     @Override
     public String getBotUsername() {
-        return props.getUsername();
+        return telegramProps.getUsername();
     }
 }
