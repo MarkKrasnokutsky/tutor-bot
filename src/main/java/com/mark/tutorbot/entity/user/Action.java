@@ -1,5 +1,7 @@
 package com.mark.tutorbot.entity.user;
 
 public enum Action {
-    FREE, AUTH;
+    FREE,
+    SENDING_TOKEN,
+    AUTH;
 }

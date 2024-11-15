@@ -14,4 +14,6 @@ public class Command {
     public static final String PROGRESS = "/progress";
 
     public static final String PROFILE = "/profile";
+
+    public static final String SEARCH = "/search";
 }

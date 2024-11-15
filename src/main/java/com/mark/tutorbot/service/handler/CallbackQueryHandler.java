@@ -3,7 +3,9 @@ package com.mark.tutorbot.service.handler;
 import com.mark.tutorbot.service.manager.auth.AuthManager;
 import com.mark.tutorbot.service.manager.feedback.FeedbackManager;
 import com.mark.tutorbot.service.manager.help.HelpManager;
+import com.mark.tutorbot.service.manager.profile.ProfileManager;
 import com.mark.tutorbot.service.manager.progress_control.ProgressControlManager;
+import com.mark.tutorbot.service.manager.search.SearchManager;
 import com.mark.tutorbot.service.manager.task.TaskManager;
 import com.mark.tutorbot.service.manager.timetable.TimetableManager;
 import com.mark.tutorbot.telegram.Bot;
@@ -37,20 +39,34 @@ public class CallbackQueryHandler {
     @Autowired
     private final ProgressControlManager progressControlManager;
 
+    @Autowired
+    private final ProfileManager profileManager;
+
+    @Autowired
+    private final SearchManager searchManager;
+
 
     public BotApiMethod<?> answer(CallbackQuery callbackQuery, Bot bot) {
         String callbackData = callbackQuery.getData();
-        if (callbackData.split("_")[0].equals(TIMETABLE)) {
-            return timetableManager.answerCallbackQuery(callbackQuery, bot);
-        }
-        if (callbackData.split("_")[0].equals(TASK)) {
-            return taskManager.answerCallbackQuery(callbackQuery, bot);
-        }
-        if (callbackData.split("_")[0].equals(PROGRESS)) {
-            return progressControlManager.answerCallbackQuery(callbackQuery, bot);
-        }
-        if (AUTH.equals(callbackData.split("_")[0])) {
-            return authManager.answerCallbackQuery(callbackQuery, bot);
+        switch (callbackData.split("_")[0]) {
+            case TIMETABLE -> {
+                return timetableManager.answerCallbackQuery(callbackQuery, bot);
+            }
+            case TASK -> {
+                return taskManager.answerCallbackQuery(callbackQuery, bot);
+            }
+            case PROGRESS -> {
+                return progressControlManager.answerCallbackQuery(callbackQuery, bot);
+            }
+            case AUTH -> {
+                return authManager.answerCallbackQuery(callbackQuery, bot);
+            }
+            case PROFILE -> {
+                return profileManager.answerCallbackQuery(callbackQuery, bot);
+            }
+            case SEARCH -> {
+                return searchManager.answerCallbackQuery(callbackQuery, bot);
+            }
         }
         switch (callbackData) {
             case FEEDBACK -> {

@@ -5,6 +5,7 @@ import com.mark.tutorbot.service.manager.feedback.FeedbackManager;
 import com.mark.tutorbot.service.manager.help.HelpManager;
 import com.mark.tutorbot.service.manager.profile.ProfileManager;
 import com.mark.tutorbot.service.manager.progress_control.ProgressControlManager;
+import com.mark.tutorbot.service.manager.search.SearchManager;
 import com.mark.tutorbot.service.manager.start.StartManager;
 import com.mark.tutorbot.service.manager.task.TaskManager;
 import com.mark.tutorbot.service.manager.timetable.TimetableManager;
@@ -42,6 +43,9 @@ public class CommandHandler {
     @Autowired
     private final ProfileManager profileManager;
 
+    @Autowired
+    private final SearchManager searchManager;
+
     public BotApiMethod<?> answer(Message message, Bot bot) {
         switch (message.getText()) {
             case Command.START -> {
@@ -65,6 +69,9 @@ public class CommandHandler {
             case Command.PROFILE -> {
                 return profileManager.answerCommand(message, bot);
             }
+            case Command.SEARCH -> {
+                return searchManager.answerCommand(message, bot);
+            }
             default -> {
                 return defaultAnswer(message);
             }
@@ -83,6 +90,5 @@ public class CommandHandler {
     private BotApiMethod<?> start(Message message, Bot bot) {
         return startManager.answerCommand(message, bot);
     }
-
 
 }
