@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public class User {
     private Long chatId;
 
     @Column(name = "token", unique = true)
-    UUID token;
+    String token;
 
     @Enumerated(EnumType.STRING)
     Role role;
@@ -43,7 +44,19 @@ public class User {
     @PrePersist
     private void generateToken() {
         if (this.getToken() == null) {
-            token = UUID.randomUUID();
+            token = UUID.randomUUID().toString();
         }
+    }
+
+    public void addUser(User user) {
+        if (users == null) {
+            users = new ArrayList<>();
+        }
+        users.add(user);
+    }
+
+    public void refreshToken() {
+        String uuid = UUID.randomUUID().toString();
+        this.setToken(uuid);
     }
 }
