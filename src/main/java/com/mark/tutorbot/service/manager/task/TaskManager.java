@@ -42,7 +42,7 @@ public class TaskManager extends AbstractManager {
             case TASK -> {
                 return mainMenu(callbackQuery);
             }
-            case TASK_ADD -> {
+            case TASK_CREATE -> {
                 return add(callbackQuery);
             }
         }
@@ -58,7 +58,7 @@ public class TaskManager extends AbstractManager {
                 keyboardFactory.getInlineKeyboardMarkup(
                         List.of("Прикрепить домашнее задание"),
                         List.of(1),
-                        List.of(TASK_ADD)
+                        List.of(TASK_CREATE)
                 )
         );
     }
@@ -72,7 +72,7 @@ public class TaskManager extends AbstractManager {
                 keyboardFactory.getInlineKeyboardMarkup(
                         List.of("Прикрепить домашнее задание"),
                         List.of(1),
-                        List.of(TASK_ADD)
+                        List.of(TASK_CREATE)
                 )
         );
     }
