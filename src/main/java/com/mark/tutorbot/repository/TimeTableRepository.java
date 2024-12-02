@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface TimeTableRepository extends JpaRepository<TimeTable, UUID> {
+public interface TimeTableRepository extends JpaRepository<TimeTable, Long> {
 
     List<TimeTable> findAllByUsersContainingAndWeekDay(User user, WeekDay weekDay);
-    TimeTable findTimeTableById(UUID id);
+    TimeTable findTimeTableById(Long id);
 
 }

@@ -104,16 +104,6 @@ public class TimetableManager extends AbstractManager {
             }
 
         }
-        if (FINISH.equals(splitCallbackData[1])) {
-            try {
-                return finish(callbackQuery, splitCallbackData, bot);
-            } catch (TelegramApiException e) {
-                log.error(e.getMessage());
-            }
-        }
-        if (BACK.equals(splitCallbackData[1])) {
-            return back(callbackQuery, splitCallbackData);
-        }
         switch (callbackData) {
             case TIMETABLE -> {
                 return mainMenu(callbackQuery);
@@ -130,15 +120,25 @@ public class TimetableManager extends AbstractManager {
                 return showDay(callbackQuery);
             }
         }
+        if (FINISH.equals(splitCallbackData[1])) {
+            try {
+                return finish(callbackQuery, splitCallbackData, bot);
+            } catch (TelegramApiException e) {
+                log.error(e.getMessage());
+            }
+        }
+        if (BACK.equals(splitCallbackData[1])) {
+            return back(callbackQuery, splitCallbackData);
+        }
         return null;
     }
 
     private BotApiMethod<?> setDescription(Message message, User user) {
         user.setAction(Action.FREE);
         userRepository.save(user);
-        String id = user.getDetails().getTimetableId();
+        Long id = user.getDetails().getTimetableId();
         var timeTable = timeTableRepository.findTimeTableById(
-                UUID.fromString(id)
+                id
         );
         timeTable.setDescription(message.getText());
         timeTableRepository.save(timeTable);
@@ -148,9 +148,9 @@ public class TimetableManager extends AbstractManager {
     private BotApiMethod<?> setTittle(Message message, User user) {
         user.setAction(Action.FREE);
         userRepository.save(user);
-        String id = user.getDetails().getTimetableId();
+        Long id = user.getDetails().getTimetableId();
         var timeTable = timeTableRepository.findTimeTableById(
-                UUID.fromString(id)
+                id
         );
         timeTable.setTitle(message.getText());
         timeTableRepository.save(timeTable);
@@ -162,7 +162,7 @@ public class TimetableManager extends AbstractManager {
         var user = userRepository.findUserByChatId(callbackQuery.getMessage().getChatId());
         user.setAction(Action.SENDING_DESCRIPTION);
         var details = user.getDetails();
-        details.setTimetableId(id);
+        details.setTimetableId(Long.parseLong(id));
         detailsRepository.save(details);
         user.setDetails(details);
         userRepository.save(user);
@@ -182,7 +182,7 @@ public class TimetableManager extends AbstractManager {
         var user = userRepository.findUserByChatId(callbackQuery.getMessage().getChatId());
         user.setAction(Action.SENDING_TITLE);
         var details = user.getDetails();
-        details.setTimetableId(id);
+        details.setTimetableId(Long.parseLong(id));
         detailsRepository.save(details);
         user.setDetails(details);
         userRepository.save(user);
@@ -201,7 +201,7 @@ public class TimetableManager extends AbstractManager {
             throws TelegramApiException {
 
 
-        var timeTable = timeTableRepository.findTimeTableById(UUID.fromString(
+        var timeTable = timeTableRepository.findTimeTableById(Long.parseLong(
                 splitCallbackData[2]
         ));
         timeTable.setInCreation(false);
@@ -215,7 +215,7 @@ public class TimetableManager extends AbstractManager {
                 callbackQuery.getMessage().getMessageId());
     }
 
-    private BotApiMethod<?> back(Message message, String id) {
+    private BotApiMethod<?> back(Message message, Long id) {
         return answerMethodFactory.getSendMessage(
                 message.getChatId(),
                 "Вы можете настроить описание и заголовок",
@@ -250,11 +250,11 @@ public class TimetableManager extends AbstractManager {
     }
 
     private BotApiMethod<?> addUser(CallbackQuery callbackQuery, String[] splitCallbackData) {
-        String id = splitCallbackData[4];
-        var timeTable = timeTableRepository.findTimeTableById(UUID.fromString(id));
+        Long id = Long.parseLong(splitCallbackData[4]);
+        var timeTable = timeTableRepository.findTimeTableById(id);
         var user = userRepository.findUserByChatId(Long.valueOf(splitCallbackData[3]));
         timeTable.addUser(user);
-        timeTable.setTitle(user.getDetails().getFirstName());
+        timeTable.setTitle(user.getDetails() != null ? user.getDetails().getFirstName() : "Unnamed");
         timeTableRepository.save(timeTable);
         return answerMethodFactory.getEditMessageText(
                 callbackQuery,
@@ -271,8 +271,8 @@ public class TimetableManager extends AbstractManager {
     }
 
     private BotApiMethod<?> addMinute(CallbackQuery callbackQuery, String[] splitCallbackData) {
-        String id = splitCallbackData[4];
-        var timeTable = timeTableRepository.findTimeTableById(UUID.fromString(id));
+        Long id = Long.parseLong(splitCallbackData[4]);
+        var timeTable = timeTableRepository.findTimeTableById(id);
         List<String> text = new ArrayList<>();
         List<String> data = new ArrayList<>();
         List<Integer> cfg = new ArrayList<>();
@@ -280,7 +280,7 @@ public class TimetableManager extends AbstractManager {
         int index = 0;
         var me = userRepository.findUserByChatId(callbackQuery.getMessage().getChatId());
         for (User user : me.getUsers()) {
-            text.add(user.getDetails().getFirstName());
+            text.add(user.getDetails() != null ? user.getDetails().getFirstName() : "Unnamed");
             data.add(TIMETABLE_ADD_USER + user.getChatId() + "_" + id);
             if (index == 5) {
                 cfg.add(5);
@@ -314,8 +314,8 @@ public class TimetableManager extends AbstractManager {
     }
 
     private BotApiMethod<?> addHour(CallbackQuery callbackQuery, String[] splitCallbackData) {
-        String id = splitCallbackData[4];
-        var timeTable = timeTableRepository.findTimeTableById(UUID.fromString(id));
+        Long id = Long.parseLong(splitCallbackData[4]);
+        var timeTable = timeTableRepository.findTimeTableById(id);
         List<String> text = new ArrayList<>();
         List<String> data = new ArrayList<>();
         timeTable.setHour(Short.valueOf(splitCallbackData[3]));
@@ -346,7 +346,7 @@ public class TimetableManager extends AbstractManager {
     }
 
     private BotApiMethod<?> addWeekDay(CallbackQuery callbackQuery, String[] data) {
-        UUID id = UUID.fromString(data[4]);
+        Long id = Long.parseLong(data[4]);
         var timeTable = timeTableRepository.findTimeTableById(id);
         switch (data[3]) {
             case "1" -> timeTable.setWeekDay(WeekDay.MONDAY);
