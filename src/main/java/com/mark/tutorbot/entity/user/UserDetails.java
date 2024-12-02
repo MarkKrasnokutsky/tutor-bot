@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "user_details")
@@ -18,9 +17,9 @@ import java.util.UUID;
 public class UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    UUID id;
+    Long id;
 
     @Column(name = "username")
     String username;
@@ -35,6 +34,6 @@ public class UserDetails {
     LocalDateTime registeredAt;
 
     @Column(name = "now_updating_timetable")
-    String timetableId;
+    Long timetableId;
 
 }
